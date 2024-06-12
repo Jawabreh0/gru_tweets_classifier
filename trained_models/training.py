@@ -61,7 +61,7 @@ model = Sequential([
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Train the model
-model.fit(padded_sequences, labels, epochs=7, batch_size=32)
+model.fit(padded_sequences, labels, epochs=50, batch_size=32)
 
 # Save the model
 model.save('gru_tweet_classifier.h5')
