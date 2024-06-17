@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix, classification_report
 import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -65,3 +65,43 @@ plt.ylabel('Actual')
 plt.title('Confusion Matrix')
 plt.show()
 
+# Extracting precision, recall, f1-score for visualization
+report_dict = classification_report(labels, predictions, target_names=['normal', 'harmful'], output_dict=True)
+categories = list(report_dict.keys())[:-3]  # Exclude 'accuracy', 'macro avg', 'weighted avg'
+precision = [report_dict[cat]['precision'] for cat in categories]
+recall = [report_dict[cat]['recall'] for cat in categories]
+f1_score = [report_dict[cat]['f1-score'] for cat in categories]
+
+x = np.arange(len(categories))  # the label locations
+width = 0.2  # the width of the bars
+
+# Plotting precision, recall, f1-score
+fig, ax = plt.subplots(figsize=(10, 6))
+rects1 = ax.bar(x - width, precision, width, label='Precision')
+rects2 = ax.bar(x, recall, width, label='Recall')
+rects3 = ax.bar(x + width, f1_score, width, label='F1-Score')
+
+# Add some text for labels, title and custom x-axis tick labels, etc.
+ax.set_ylabel('Scores')
+ax.set_title('Scores by category and metric')
+ax.set_xticks(x)
+ax.set_xticklabels(categories)
+ax.legend()
+
+# Function to label the bars
+def autolabel(rects):
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate('{}'.format(round(height, 2)),
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+autolabel(rects1)
+autolabel(rects2)
+autolabel(rects3)
+
+fig.tight_layout()
+
+plt.show()
